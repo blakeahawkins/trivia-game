@@ -29,61 +29,64 @@ $(document).ready(function() {
         $("#start-button").hide();
         var questionsRemaining = 10;
         var play = true;
-        function triviaLoop() {
-            for(i = 0; i < questions.length; i++) {
-                // Shuffle Answer Divs
-                $(".triviaAnswer").each(function() {
-                    var divs = $(this).find("div");
-                    for(var m = 0; m < divs.length; m++) {
-                        $(divs[m]).remove();
-                    }
-                    function shuffle(array) {
-                        var currentIndex = array.length, temporaryValue, randomIndex;
-                        
-                        while (0 !== currentIndex) {
-                        
-                            randomIndex = Math.floor(Math.random() * currentIndex);
-                            currentIndex -= 1;
-                        
-                            temporaryValue = array[currentIndex];
-                            array[currentIndex] = array[randomIndex];
-                            array[randomIndex] = temporaryValue;
-                        }
-                        
-                        return array;
-                    }
-                    divs = shuffle(divs);
-                    for(var m = 0; m < divs.length; m++) {
-                        $(divs[m]).appendTo(this);
-                    }
-                });
-                // Write the Question and Answers. #answer-1 is always correct.
-                $("#trivia-question").text(questions[i].question);
-                $("#answer-1").text(questions[i].answers.correct);
-                $("#answer-2").text(questions[i].answers.incorrect[0]);
-                $("#answer-3").text(questions[i].answers.incorrect[1]);
-                $("#answer-4").text(questions[i].answers.incorrect[2]);
+        for(i = 0; i < questions.length; i++) {
+            // Write the Question and Answers. #answer-1 is always correct.
+            var triviaQuestion = $("<div>").text(questions[i].question);
+            $("#trivia-question").text(triviaQuestion);
+
+            var triviaAnswers = $("<ol>");
+            var answersList = [
+                questions[i].answers.correct,
+                questions[i].answers.incorrect[0],
+                questions[i].answers.incorrect[1],
+                questions[i].answers.incorrect[2]
+            ];
+            
+            function shuffle(array) {
+                var currentIndex = array.length, temporaryValue, randomIndex;
                 
-                // function correctGuess();
-
-                // function incorrectGuess();
-
-                function timesUp() {
-                    $("#trivia-question").text("Out of time!");
-                    $("#answer-2").empty();
-                    $("#answer-3").empty();
-                    $("#answer-4").empty();
+                // While there remain elements to shuffle...
+                while (0 !== currentIndex) {
+                
+                    // Pick a remaining element...
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
+                
+                    // And swap it with the current element.
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
                 }
+                                
+            return array;
+            }
 
-                var timer = 30;
-                while(timer > 0) {
-                    var countdown = setTimeout(function() {
-                            timer--;
-                    }, 1000);
-                }
-                if(timer = 0) {
-                    timesUp();
-                }
+            answersList = shuffle(answersList);
+            
+            for(i = 0; i < answersList.length; i++) {
+                var triviaAnswer = $("<li>").text(answersList[i]);
+                triviaAnswers.append(triviaAnswer);
+            }
+            $("#trivia-answers").append(triviaAnswers);
+            
+            // function correctGuess();
+
+            // function incorrectGuess();
+
+            function timesUp() {
+                $("#trivia-question").text("Out of time!");
+                $("#trivia-answers").text(questions[i].answers.correct);
+            }
+
+            var timer = 30;
+            while(timer > 0) {
+                var countdown = setTimeout(function() {
+                        timer--;
+                        $("#timer").text(timer);
+                }, 1000);
+            }
+            if(timer = 0) {
+                timesUp();
             }
         }
     })
